@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html ng-app="myapp">
+  <head>
+    <title>Medical Data</title>
+	<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+   <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css" rel="stylesheet" type="text/css" /> 
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script> 
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script> 
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+
+  </head>
+  <body ng-controller="DynamicFormController">
+  <div class="container">
+  <h3>Medical Form</h3>
+  
+    <form name="myForm" class="form-horizontal" role="form">
+	<h5>Drug1 Json</h5>
+ <div >    
+
+  
+  <div class="row">
+  <div class="col-md-6" ng-repeat="field in entity.fields | orderBy:'order'">
+    <!-- Text FIELDS -->
+    <div ng-if="field.type=='text'" class="form-group">
+      <label class="control-label">{{field.label}}</label>
+     
+        <input type="{{ field.type }}"  class="form-control"  ng-readonly="field.isReadonly" ng-required="field.isRequired"/>
+        
+    
+    </div>
+	<!-- Number FIELDS -->
+	<div ng-if="field.type=='number'" class="form-group">
+      <label class="control-label">{{field.label}}</label>
+      
+	  <div class="input-group mb-3">
+        <input type="{{ field.type }}" class="form-control"  ng-readonly="field.isReadonly" ng-required="field.isRequired"/>
+        <div class="input-group-append">
+    <span class="input-group-text" id="basic-addon2">{{field.unit}}</span>
+  </div>
+</div>
+    </div>
+	
+	<!-- Date FIELDS -->
+	<div ng-if="field.type=='date'" class="form-group">
+      <label class="control-label">{{field.label}}</label>
+      
+        <input type="text"  class="form-control"  ng-readonly="field.isReadonly" ng-required="field.isRequired"  datepicker/>  
+     
+    </div>
+	
+	<!-- Drop FIELDS -->
+	<div ng-if="field.type=='dropdown'" class="form-group">
+      <label class="control-label">{{field.label}}</label>
+      
+       <select class="form-control" ng-readonly="field.isReadonly" ng-required="field.isRequired">
+		<option 
+				ng-repeat="item in field.items"
+				value="{{item.value}}">
+		  {{item.text}}
+		</option>
+	</select>
+        
+      
+    </div>
+	</div>
+   </div>
+ 
+
+ </div>
+
+
+  <br/>
+  <button class="btn btn-primary" type="submit" id="submit">Submit</button>
+  <br/>
+  
+   <br/>
+
+ </form>
+ 
+ <form name="myForm" class="form-horizontal" role="form">
+ <h5>Drug2 Json</h5>
+ <div >    
+  <div class="row">
+  <div class="col-md-6" ng-repeat="field in entity1.fields | orderBy:'order'">
+    <!-- Text FIELDS -->
+    <div ng-if="field.type=='text'" class="form-group">
+      <label class="control-label">{{field.label}}</label>
+        <input type="{{ field.type }}"  class="form-control"  ng-readonly="field.isReadonly" ng-required="field.isRequired"/>
+   
+    </div>
+	<!-- Number FIELDS -->
+	<div ng-if="field.type=='number'" class="form-group">
+      <label class="control-label">{{field.label}}</label>
+     
+	  <div class="input-group mb-3">
+        <input type="{{ field.type }}" class="form-control"  ng-readonly="field.isReadonly" ng-required="field.isRequired"/>
+        <div class="input-group-append">
+    <span class="input-group-text" id="basic-addon2">{{field.unit}}</span>
+  </div>
+</div>
+    </div>
+	
+	<!-- Date FIELDS -->
+	<div ng-if="field.type=='date'" class="form-group">
+      <label class="control-label">{{field.label}}</label>
+     
+        <input type="text"  class="form-control"  ng-readonly="field.isReadonly" ng-required="field.isRequired"  datepicker/>  
+    
+    </div>
+	
+	<!-- Drop FIELDS -->
+	<div ng-if="field.type=='dropdown'" class="form-group">
+      <label class="control-label">{{field.label}}</label>
+      
+       <select class="form-control" ng-readonly="field.isReadonly" ng-required="field.isRequired">
+		<option 
+				ng-repeat="item in field.items"
+				value="{{item.value}}">
+		  {{item.text}}
+		</option>
+	</select>
+        
+   
+    </div>
+	
+   </div>
+ </div>
+
+ </div>
+
+
+  <br/>
+  <button class="btn btn-primary" type="submit" id="submit">Submit</button>
+  <br/>
+  
+   <br/>
+
+ </form>
+ </div>
+  </body>
+  <script>
+ 
+  var app = angular.module("myapp", []);
+    app.directive("datepicker", function () {
+    return {
+        restrict: "A",
+        link: function (scope, el, attr) 
+		{
+            el.datepicker({
+                            dateFormat: 'yy-mm-dd'
+                        });
+        }
+    };
+});
+  
+  app.controller('DynamicFormController', function ($scope, $log,$filter) {
+
+    // we would get this from the api
+    $scope.entity = {
+  "fields": [
+    {
+      "label": "Date of Birth (YYYY-MM-DD)",
+      "key": "birthday",
+      "isRequired": true,
+      "order": 1,
+      "isReadonly": false,
+      "type": "date"
+    },
+    {
+      "label": "Gestational Age",
+      "key": "gestationalAge",
+      "isRequired": true,
+      "order": 3,
+      "unit": "weeks",
+      "isReadonly": false,
+      "type": "number"
+    },
+    {
+      "label": "Sex",
+      "items": [
+        {
+          "value": "male",
+          "text": "Male"
+        },
+        {
+          "value": "female",
+          "text": "Female"
+        }
+      ],
+      "key": "sex",
+      "isRequired": true,
+      "order": 4,
+      "isReadonly": false,
+      "type": "dropdown"
+    },
+    {
+      "label": "Height",
+      "key": "height",
+      "isRequired": true,
+      "order": 5,
+      "unit": "cm",
+      "isReadonly": false,
+      "type": "number"
+    },
+    {
+      "label": "Weight",
+      "key": "weight",
+      "isRequired": true,
+      "order": 6,
+      "unit": "kg",
+      "isReadonly": false,
+      "type": "number"
+    },
+    {
+      "label": "BMI",
+      "key": "bmi",
+      "order": 11,
+      "unit": "kg/m²",
+      "isReadonly": true,
+      "type": "number"
+    }
+  ]
+};
+
+$scope.entity1 = {
+  "fields": [
+    {
+      "label": "Date of Birth (YYYY-MM-DD)",
+      "key": "birthday",
+      "isRequired": true,
+      "order": 1,
+      "isReadonly": false,
+      "type": "date"
+    },
+    {
+      "label": "Sex",
+      "items": [
+        {
+          "value": "male",
+          "text": "Male"
+        },
+        {
+          "value": "female",
+          "text": "Female"
+        }
+      ],
+      "key": "sex",
+      "isRequired": true,
+      "order": 2,
+      "isReadonly": false,
+      "type": "dropdown"
+    },
+    {
+      "label": "Weight",
+      "key": "weight",
+      "isRequired": true,
+      "order": 3,
+      "unit": "kg",
+      "isReadonly": false,
+      "type": "number"
+    }
+  ]
+};
+
+ 
+
+
+
+
+});
+	
+
+
+
+
+  
+	
+	
+  
+  
+  </script>
+</html>
